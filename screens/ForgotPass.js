@@ -1,25 +1,19 @@
 import React, {useState} from 'react'
 import { View, StyleSheet, Text, SafeAreaView } from 'react-native'
 import { TextInput,Button,Title  } from 'react-native-paper';
-
 export default function Login({navigation}) {
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     function login() {
         alert("putanigna")
     }
-    function redirectToRegister() {
+      function redirectToRegister() {
         navigation.navigate('Register')
-    }
-    function redirectToForgotPass() {
-        navigation.navigate('ForgotPass')
     }
     return (
         <SafeAreaView style={styles.container}>
-            <View>
                 <View style={styles.flexColumn}>
                     <View style={ styles.padXy}>
-                        <Title style={{fontWeight:"bold"}}>Sign in your account</Title>
+                        <Title style={{fontWeight:"bold"}}>Enter your registered email</Title>
                     </View>
                     <TextInput
                         style={styles.textInput}
@@ -28,32 +22,12 @@ export default function Login({navigation}) {
                         onChangeText={email => setEmail(email)}
                         mode = "outlined"
                     />
-                    <View style={styles.flexEnd}>
-                        <Text onPress={redirectToForgotPass} style={styles.primaryColor}>Forgot password?</Text>
-                    </View>
-                    <TextInput
-                        style={styles.textInput}
-                        label="Password"
-                        value={password}
-                        onChangeText={password => setPassword(password)}
-                        mode = "outlined"
-                        secureTextEntry={true}
-                />
                 </View>
                 <View style={styles.flexColumn, styles.btnContained, styles.padXy}>
-                    <Button style={{paddingVertical:7, backgroundColor: "#53369f" , paddingHorizontal:7, marginTop:10}} mode="contained" onPress={login}>
-                        Login
+                    <Button style={{paddingVertical:7, backgroundColor: "#53369f" , paddingHorizontal:7, marginTop:10}} mode="contained" >
+                        Send password link
                     </Button>
                 </View>
-            </View>
-                    
-                <View style={styles.flexRow}>
-                        <View style={styles.flexRow}>
-                            <Text style={ styles.textCenter, {fontSize: 18}}>Not a member yet? </Text>
-                        <Text style={styles.textCenter, {color: "#53369f", fontWeight:"bold", fontSize: 18}} onPress={redirectToRegister}> Signup</Text>
-                        </View>
-                </View>
-            
         </SafeAreaView>
         
     )
@@ -64,7 +38,7 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         // alignItems: 'center',
-        justifyContent: 'space-evenly',
+        justifyContent: 'center',
         paddingHorizontal: 15,
         marginVertical: 15
     },
@@ -76,8 +50,7 @@ const styles = StyleSheet.create({
     },
     flexRow: {
         flexDirection: "row",
-        alignSelf: 'center',
-        justifyContent: 'flex-end'
+        alignSelf:'center'
     },
     justifyCenter:{
         justifyContent: "center"  
@@ -91,8 +64,7 @@ const styles = StyleSheet.create({
     primaryColor:{
         color: "#53369f",
         fontWeight: "bold",
-        marginVertical: 15,
-        fontSize:18
+        marginVertical: 15
     },
     padXy: {
          paddingHorizontal: 15,
