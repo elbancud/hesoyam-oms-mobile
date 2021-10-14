@@ -1,33 +1,86 @@
-import React, {useState} from 'react'
-import { View, StyleSheet, Text, SafeAreaView } from 'react-native'
-import { TextInput,Button,Title  } from 'react-native-paper';
-export default function Login({navigation}) {
-    const [email, setEmail] = useState('');
-    function login() {
-        alert("putanigna")
+import React, {useState} from 'react';
+import { View, StyleSheet, Text, SafeAreaView } from 'react-native';
+import { TextInput, Button, Title,HelperText, Snackbar} from 'react-native-paper';
+import firebase from '../Firebase/firebase';
+
+export default function ForgotPass({navigation}) {
+    const [emailInput, setEmailInput] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [emailErrorState, setEmailErrorState] = useState(false);
+    const [snackBar, setSnackBar] = useState(false);
+    const [visible, setVisible] = useState(false);
+    const [snackMessage, setSnackMessage] = useState('')
+    const [variant, setVariant] = useState('')
+
+    const onDismissSnackBar = () => setVisible(false);
+    function sendEmail() {
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+          if (!emailInput) {
+            setEmailError("Please enter your Email.");
+            setEmailErrorState(true);
+            } else if (reg.test(emailInput) === false) {
+                setEmailError("Please enter valid Email.");
+                setEmailErrorState(true);
+            } else {
+                    setEmailErrorState(false);
+                    firebase.auth().sendPasswordResetEmail(emailInput)
+                    .then(() => {
+                        setSnackBar(true);
+                        setVisible(!visible)
+                        setSnackMessage("Success! reset link has been sent to your email.")
+                        setVariant("success")
+                        
+                    })
+                    .catch((error) => {
+                        setSnackBar(true);
+                        setVisible(!visible)
+                        setSnackMessage(error.message)
+                        setVariant("error")
+                    });
+            }
+            
     }
-      function redirectToRegister() {
-        navigation.navigate('Register')
-    }
+    
     return (
         <SafeAreaView style={styles.container}>
-                <View style={styles.flexColumn}>
-                    <View style={ styles.padXy}>
-                        <Title style={{fontWeight:"bold"}}>Enter your registered email</Title>
+                <View style= {{marginTop:50}}>
+                    <View style={styles.flexColumn}>
+                        <View style={ styles.padXy}>
+                            <Title style={{fontWeight:"bold"}}>Enter your registered email</Title>
+                        </View>
+                        <TextInput
+                            error={emailErrorState}
+                            helperText={emailError}
+                            style={styles.textInput}
+                            label="Email"
+                            value={emailInput}
+                            onChangeText={email => setEmailInput(email)}
+                            mode = "outlined"
+                        />
+                        <HelperText type="error" visible={emailErrorState} style={{marginLeft:15}}>
+                            {emailError}
+                        </HelperText>
                     </View>
-                    <TextInput
-                        style={styles.textInput}
-                        label="Email"
-                        value={email}
-                        onChangeText={email => setEmail(email)}
-                        mode = "outlined"
-                    />
-                </View>
-                <View style={styles.flexColumn, styles.btnContained, styles.padXy}>
-                    <Button style={{paddingVertical:7, backgroundColor: "#53369f" , paddingHorizontal:7, marginTop:10}} mode="contained" >
-                        Send password link
+                    <View style={styles.flexColumn, styles.btnContained, styles.padXy}>
+                    <Button onPress={sendEmail} style={{paddingVertical:7, backgroundColor: "#53369f" , paddingHorizontal:7 }} mode="contained" >
+                            Send password link
                     </Button>
+                    </View>
+                    
                 </View>
+                <View className={{justifyContent:"center" }}>
+                    <Snackbar
+                            duration = {3000}
+                            style={variant === "success" ? styles.success: variant === "error" ?styles.error: styles.warning}
+                            visible={visible}
+                            onDismiss={onDismissSnackBar}
+                            >
+                        {snackMessage}
+                    </Snackbar>
+                    
+                </View>
+           
         </SafeAreaView>
         
     )
@@ -38,9 +91,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         // alignItems: 'center',
-        justifyContent: 'center',
+        justifyContent: 'space-around',
         paddingHorizontal: 15,
         marginVertical: 15
+
     },
    
     flexColumn: {
@@ -52,20 +106,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignSelf:'center'
     },
-    justifyCenter:{
-        justifyContent: "center"  
-    },
-    textCenter: {
-        textAlign:"center"
-    },
-    primaryBG:{
-        backgroundColor: "#53369f"
-    },
-    primaryColor:{
-        color: "#53369f",
-        fontWeight: "bold",
-        marginVertical: 15
-    },
+  
     padXy: {
          paddingHorizontal: 15,
          marginVertical: 15
@@ -95,5 +136,17 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         backgroundColor: "#53369f",
        
+    },
+    success: {
+        backgroundColor: "#2e7d32"
+
+    }, error:{
+        backgroundColor: "#d32f2f"
+
+        
+    }, warning: {
+        backgroundColor: "#ed6c02"
+        
+
     }
 });

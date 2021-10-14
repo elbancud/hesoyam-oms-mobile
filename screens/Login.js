@@ -3,30 +3,56 @@ import {ImageBackground, View, StyleSheet, Text, SafeAreaView, Image} from 'reac
 import {HelperText, TextInput,Button,Title  } from 'react-native-paper';
 import firebase from '../Firebase/firebase';
 import banner from '../Images/ui-oms.png'
+import {auth} from '../Firebase/firebase'
 export default function Login({navigation}) {
     const [emailInput, setEmailInput] = useState('');
     const [emailError, setEmailError] = useState('');
     const [emailErrorState, setEmailErrorState] = useState(false);
-    const [error, setError] = useState('');
     
     const [passwordInput, setPasswordInput] = useState('');
     const [passwordError, setPasswordError] = useState('');
     const [passwordErrorState, setPasswordErrorState] = useState(false);
+    const [showVisibility, setShowVisibility] = useState(true)
+    const [passIcon, setPassIcon] = useState("eye-off")
 
-    function login() {
+    async function login() {
+        let reg = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (!emailInput) {
-            setEmailError("Please enter your Email");
+            setEmailError("Please enter your Email.");
             setEmailErrorState(true);
-        }  else {
-            setError("");
+        } else if (reg.test(emailInput) === false) {
+             setEmailError("Please enter valid Email.");
+             setEmailErrorState(true);
+        } else {
             setEmailErrorState(false);
+             setEmailError("");
+
         }
         if (!passwordInput) {
-            setPasswordError("Please enter your password");
+            setPasswordError("Please enter your password.");
             setPasswordErrorState(true);
         } else {
             setPasswordError("");
             setPasswordErrorState(false);
+            try {
+                await auth.signInWithEmailAndPassword(emailInput, passwordInput)
+                navigation.navigate('AdminUI')
+                setEmailInput("")
+                setPasswordInput("")
+            }
+            catch (error) {
+                if ( error.code === "auth/wrong-password") {
+                    setEmailError("Invalid email or password");
+                    setEmailErrorState(true);
+                    setPasswordError("Invalid email or password");
+                    setPasswordErrorState(true);
+                } else if (error.code === "auth/user-not-found") {
+                    setEmailError("User not found, please anter a registered account");
+                    setEmailErrorState(true);
+                    setPasswordError("User not found, please anter a registered account");
+                    setPasswordErrorState(true);
+                }
+            }
         }
     }
     function redirectToRegister() {
@@ -34,6 +60,14 @@ export default function Login({navigation}) {
     }
     function redirectToForgotPass() {
         navigation.navigate('ForgotPass')
+    }
+    function showPassword() {
+        if (passIcon === "eye") {
+            setPassIcon("eye-off")
+        } else {
+            setPassIcon("eye")
+        }
+        setShowVisibility(!showVisibility)
     }
     return (
         <SafeAreaView style={styles.container}>
@@ -60,14 +94,16 @@ export default function Login({navigation}) {
                     <View style={styles.flexEnd}>
                         <Text onPress={redirectToForgotPass} style={styles.primaryColor}>Forgot password?</Text>
                     </View>
+
                     <TextInput
+                        right={<TextInput.Icon name={passIcon}  onPress={showPassword}/> }
                         error={passwordErrorState}
                         style={styles.textInput}
                         label="Password"
                         value={passwordInput}
                         onChangeText={password => setPasswordInput(password)}
                         mode = "outlined"
-                        secureTextEntry={true}
+                        secureTextEntry={showVisibility}
                     />
                     <HelperText type="error" visible={passwordErrorState} style={{marginLeft:15}}>
                         {passwordError}
@@ -97,9 +133,8 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         // alignItems: 'center',
-        // justifyContent: 'space-evenly',
+        justifyContent: 'space-evenly',
         paddingHorizontal: 15,
-        marginVertical: 15
     },
     banner: {
         width: '100%',
@@ -151,7 +186,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         width: '90%',
         alignSelf:'center'
-
     },
     btnContained: {
         alignSelf: 'center',
