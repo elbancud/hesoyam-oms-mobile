@@ -1,12 +1,33 @@
 import React, {useState} from 'react'
-import { View, StyleSheet, Text, SafeAreaView } from 'react-native'
-import { TextInput,Button,Title  } from 'react-native-paper';
-
+import {ImageBackground, View, StyleSheet, Text, SafeAreaView, Image} from 'react-native'
+import {HelperText, TextInput,Button,Title  } from 'react-native-paper';
+import firebase from '../Firebase/firebase';
+import banner from '../Images/ui-oms.png'
 export default function Login({navigation}) {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
+    const [emailInput, setEmailInput] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [emailErrorState, setEmailErrorState] = useState(false);
+    const [error, setError] = useState('');
+    
+    const [passwordInput, setPasswordInput] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [passwordErrorState, setPasswordErrorState] = useState(false);
+
     function login() {
-        alert("putanigna")
+        if (!emailInput) {
+            setEmailError("Please enter your Email");
+            setEmailErrorState(true);
+        }  else {
+            setError("");
+            setEmailErrorState(false);
+        }
+        if (!passwordInput) {
+            setPasswordError("Please enter your password");
+            setPasswordErrorState(true);
+        } else {
+            setPasswordError("");
+            setPasswordErrorState(false);
+        }
     }
     function redirectToRegister() {
         navigation.navigate('Register')
@@ -17,31 +38,43 @@ export default function Login({navigation}) {
     return (
         <SafeAreaView style={styles.container}>
             <View>
+                <ImageBackground  style={styles.banner} source={banner} resizeMode="cover"/>
+            </View>
+            <View>
                 <View style={styles.flexColumn}>
                     <View style={ styles.padXy}>
                         <Title style={{fontWeight:"bold"}}>Sign in your account</Title>
                     </View>
                     <TextInput
+                        error={emailErrorState}
+                        helperText={emailError}
                         style={styles.textInput}
                         label="Email"
-                        value={email}
-                        onChangeText={email => setEmail(email)}
+                        value={emailInput}
+                        onChangeText={email => setEmailInput(email)}
                         mode = "outlined"
                     />
+                    <HelperText type="error" visible={emailErrorState} style={{marginLeft:15}}>
+                        {emailError}
+                    </HelperText>
                     <View style={styles.flexEnd}>
                         <Text onPress={redirectToForgotPass} style={styles.primaryColor}>Forgot password?</Text>
                     </View>
                     <TextInput
+                        error={passwordErrorState}
                         style={styles.textInput}
                         label="Password"
-                        value={password}
-                        onChangeText={password => setPassword(password)}
+                        value={passwordInput}
+                        onChangeText={password => setPasswordInput(password)}
                         mode = "outlined"
                         secureTextEntry={true}
-                />
+                    />
+                    <HelperText type="error" visible={passwordErrorState} style={{marginLeft:15}}>
+                        {passwordError}
+                    </HelperText>
                 </View>
                 <View style={styles.flexColumn, styles.btnContained, styles.padXy}>
-                    <Button style={{paddingVertical:7, backgroundColor: "#53369f" , paddingHorizontal:7, marginTop:10}} mode="contained" onPress={login}>
+                    <Button style={{paddingVertical:7, backgroundColor: "#53369f" , paddingHorizontal:15, marginTop:10}} mode="contained" onPress={login}>
                         Login
                     </Button>
                 </View>
@@ -64,15 +97,17 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
         // alignItems: 'center',
-        justifyContent: 'space-evenly',
+        // justifyContent: 'space-evenly',
         paddingHorizontal: 15,
         marginVertical: 15
     },
-   
+    banner: {
+        width: '100%',
+        height: 300,
+    },
     flexColumn: {
         flexDirection: "column",
         backgroundColor: '#fff',
-       
     },
     flexRow: {
         flexDirection: "row",
@@ -119,7 +154,6 @@ const styles = StyleSheet.create({
 
     },
     btnContained: {
-        width: '90%',
         alignSelf: 'center',
         backgroundColor: "#53369f",
        

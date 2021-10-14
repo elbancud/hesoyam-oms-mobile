@@ -29,7 +29,7 @@ export default function Register({navigation}) {
   }
 
     return (
-      <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container}>
         <View>
                 <View style={styles.flexColumn}>
 
@@ -47,14 +47,14 @@ export default function Register({navigation}) {
                     </Button>
                 </View>
           
-          </View>
+        </View>
                 <View style={styles.flexRow}>
                         <View style={styles.flexRow}>
                             <Text style={ styles.textCenter,  {fontSize: 18}}>Already have an account? </Text>
                         <Text style={styles.textCenter, {color: "#960071", fontWeight:"bold", fontSize: 18}} onPress={redirectToLogin}> Sign in</Text>
                         </View>
                 </View>
-            </SafeAreaView>
+    </SafeAreaView>
     )
 }
 const styles = StyleSheet.create({
