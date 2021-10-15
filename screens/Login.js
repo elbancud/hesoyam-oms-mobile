@@ -36,9 +36,26 @@ export default function Login({navigation}) {
             setPasswordErrorState(false);
             try {
                 await auth.signInWithEmailAndPassword(emailInput, passwordInput)
-                navigation.navigate('AdminUI')
-                setEmailInput("")
-                setPasswordInput("")
+                const dbAccountDetails = firebase.database().ref("account-details")
+                dbAccountDetails.orderByChild("email").equalTo(emailInput).once('value').then(snapshot => {
+                    if (snapshot.exists()) {
+                        setEmailInput("")
+                        setPasswordInput("")
+                        const dbRef = firebase.database().ref("account-details");
+                        dbRef.on('value', snapshot => {
+                            snapshot.forEach(snap => {
+                                if (emailInput === snap.val().email) {
+                                    navigation.navigate('AdminUI', {
+                                        key: snap.key,
+                                    });
+                                }
+                            });
+                        })
+                        
+                    }
+                    
+                })
+                
             }
             catch (error) {
                 if ( error.code === "auth/wrong-password") {
@@ -119,7 +136,7 @@ export default function Login({navigation}) {
                 <View style={styles.flexRow}>
                         <View style={styles.flexRow}>
                             <Text style={ styles.textCenter, {fontSize: 18}}>Not a member yet? </Text>
-                        <Text style={styles.textCenter, {color: "#53369f", fontWeight:"bold", fontSize: 18}} onPress={redirectToRegister}> Signup</Text>
+                            <Text style={styles.textCenter, {color: "#53369f", fontWeight:"bold", fontSize: 18}} onPress={redirectToRegister}> Signup</Text>
                         </View>
                 </View>
             

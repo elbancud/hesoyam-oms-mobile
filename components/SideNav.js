@@ -9,40 +9,34 @@ import * as React from 'react';
 import { Button, View } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { NavigationContainer } from '@react-navigation/native';
-import Announcement from '../components/Announcement'
-import Dashboard from '../components/Dashboard'
-import Pages from '../components/Pages'
-import Services from '../components/Services'
-import Themes from '../components/Themes'
-import Calendar from '../components/Calendar'
-import Seat from '../components/Seat'
-import Livestream from '../components/Livestream'
-import Podcast from '../components/Podcast'
-import Report from '../components/Report'
-import Donation from '../components/Donation'
 
+function HomeScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Button
+        onPress={() => navigation.navigate('Notifications')}
+        title="Go to notifications"
+      />
+    </View>
+  );
+}
 
+function NotificationsScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Button onPress={() => navigation.goBack()} title="Go back home" />
+    </View>
+  );
+}
 
 const Drawer = createDrawerNavigator();
 
-export default function AdminUI({ route, navigation }) {
-  const {key} = route.params
+export default function SideNav() {
   return (
-    <NavigationContainer independent={true} initialRouteName="Dashboard">
-      <Drawer.Navigator screenOptions={{
-            headerTitleStyle:{fontSize: 16}
-          }} >
-          <Drawer.Screen name="Dashboard" component={Dashboard} initialParams={{key:key}} />
-            <Drawer.Screen name="Themes" component={Themes} initialParams={{key:key}}/>
-            <Drawer.Screen name="Pages" component={Pages} initialParams={{key:key}}/>
-            <Drawer.Screen name="Services" component={Services} initialParams={{key:key}}/>
-            <Drawer.Screen name="Calendar" component={Calendar} initialParams={{key:key}}/>
-            <Drawer.Screen name="Seat Management" component={Seat} initialParams={{key:key}}/>
-            <Drawer.Screen name="Announcement" component={Announcement} initialParams={{key:key}}/>
-            <Drawer.Screen name="Livestream" component={Livestream} initialParams={{key:key}}/>
-            <Drawer.Screen name="Podcasts" component={Podcast} initialParams={{key:key}}/>
-            <Drawer.Screen name="Report Bugs" component={Report} initialParams={{key:key}}/>
-            <Drawer.Screen name="Donation" component={Donation} initialParams={{key:key}}/>
+    <NavigationContainer independent={true}>
+      <Drawer.Navigator >
+        <Drawer.Screen name="Home" component={HomeScreen} />
+        <Drawer.Screen name="Notifications" component={NotificationsScreen} />
       </Drawer.Navigator>
     </NavigationContainer>
   );
