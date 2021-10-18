@@ -1,13 +1,20 @@
 import React, {useState, useEffect} from 'react'
-import {View, StyleSheet, Text, SafeAreaView, ScrollView} from 'react-native'
-import {Title,IconButton, DataTable} from 'react-native-paper';
+import {View, StyleSheet, Text, SafeAreaView, ScrollView, ImageBackground} from 'react-native'
+import {Title,IconButton, DataTable, Button, Snackbar} from 'react-native-paper';
 import firebase from 'firebase';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function Donation({ route }) {
     const {key} = route.params
     
     const [update, setUpdate] = useState(false);
     const [donationsArray, setDonationsArray] = useState();
+    const [visible, setVisible] = useState(false);
+    const [snackMessage, setSnackMessage] = useState('')
+    const [variant, setVariant] = useState('')
+    const [qrArray, setQrArray] = useState('')
+
+    const onDismissSnackBar = () => setVisible(false);
 
     useEffect(() => {
         const dbRef = firebase.database().ref("user-donations");
@@ -20,7 +27,42 @@ export default function Donation({ route }) {
                 }
                 setDonationsArray(donationsArray)
             });
+        const dbQR= firebase.database().ref('qr-e-wallet')
+        dbQR.once("value")
+            .then(function (snapshot) {
+                const snap = snapshot.val();
+                const qrArray = [];
+                for (let id in snap) {
+                    qrArray.push({id, ...snap[id]});
+                }
+                setQrArray(qrArray)
+            });
     }, [update])
+
+         const pickImage = async () => {
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                quality: 1,
+            });
+            const storage = firebase.storage().ref('qr-links').child('qr-e-wallet')
+            console.log(result.uri)
+            //  storage.put(result.uri).then(() => {
+            //                 storage.getDownloadURL().then(url => {
+            //                     const db = firebase.database().ref('qr-e-wallet')
+            //                     const imageData = {
+            //                         eWalletLink: url
+            //                     }
+            //                     db.update(imageData).then(() => {
+            //                         setUpdate(!update)
+            //                         setVisible(!visible)
+            //                         setVariant("success")
+            //                         setSnackMessage("That's it right there, image posted")
+            //                     })
+            //                 })
+            // })
+
+          
+  };
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
@@ -29,33 +71,33 @@ export default function Donation({ route }) {
                             <Title style={{fontWeight:"bold", marginBottom: 10}}>Donations Tab: Upload QR & View Donators</Title>
                             <Text style={{fontSize: 16, lineHeight: 25}}>Here you will be uploading your e-wallet's qr image, please take a good screenshot and make sure to cut out and keep just the qr code</Text>
                         </View>
+                        <View style={ styles.padXy}>
+                    <Button onPress={pickImage} icon="camera" style={{padding:5}} mode="outlined">Upload QR Image</Button>
+                        </View>
                                        
                 <View style={styles.mY}>
                     <View style={styles.padX}>
-                        <DataTable>
-                            <DataTable.Header>
-                                <DataTable.Title>Name</DataTable.Title>
-                                <DataTable.Title >Amount</DataTable.Title>
-                            </DataTable.Header>
-                        {donationsArray ? donationsArray.map((data)=> {
+                   
+                        {qrArray ? qrArray.map((data)=> {
                                     return (
-                                    <DataTable.Row>
-                                            <DataTable.Cell align>{data.donator}</DataTable.Cell>
-                                            <DataTable.Cell>{data.donationAmount}</DataTable.Cell>
-                                       
-                                    </DataTable.Row>
+                                        // <Text>{data.eWalletLink}</Text>
+                                        <ImageBackground source={data.eWalletLink} style={{width:'90%'}}resizeMode="cover"/>
                                     )
-                                return null;
                             }) : <Text>No Donators yet</Text>}
-                        </DataTable>
 
                     </View>
-
                 </View>
                      
-
+                          
             </ScrollView>
-               
+                            <Snackbar
+                                    duration = {2500}
+                                    style={variant === "success" ? styles.success: variant === "error" ?styles.error: styles.warning}
+                                    visible={visible}
+                                    onDismiss={onDismissSnackBar}
+                                    >
+                                {snackMessage}
+                            </Snackbar>
         </SafeAreaView>
       
     )
@@ -126,7 +168,6 @@ const styles = StyleSheet.create({
     },
     btnContained: {
         alignSelf: 'center',
-        backgroundColor: "#53369f",
     },   success: {
         backgroundColor: "#2e7d32"
 
