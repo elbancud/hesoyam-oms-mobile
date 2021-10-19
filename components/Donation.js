@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import {View, StyleSheet, Text, SafeAreaView, ScrollView, ImageBackground} from 'react-native'
+import {View, StyleSheet, Text, SafeAreaView, ScrollView, ImageBackground, Image} from 'react-native'
 import {Title,IconButton, DataTable, Button, Snackbar} from 'react-native-paper';
 import firebase from 'firebase';
 import * as ImagePicker from 'expo-image-picker';
@@ -13,10 +13,20 @@ export default function Donation({ route }) {
     const [snackMessage, setSnackMessage] = useState('')
     const [variant, setVariant] = useState('')
     const [qrArray, setQrArray] = useState('')
+      const [image, setImage] = useState(null);
 
     const onDismissSnackBar = () => setVisible(false);
 
     useEffect(() => {
+        (async () => {
+            if (Platform.OS !== 'web') {
+                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+                if (status !== 'granted') {
+                alert('Sorry, we need camera roll permissions to make this work!');
+                }
+            }
+            })();
+    
         const dbRef = firebase.database().ref("user-donations");
         dbRef.once("value")
             .then(function (snapshot) {
@@ -45,21 +55,22 @@ export default function Donation({ route }) {
                 quality: 1,
             });
             const storage = firebase.storage().ref('qr-links').child('qr-e-wallet')
-            console.log(result.uri)
-            //  storage.put(result.uri).then(() => {
-            //                 storage.getDownloadURL().then(url => {
-            //                     const db = firebase.database().ref('qr-e-wallet')
-            //                     const imageData = {
-            //                         eWalletLink: url
-            //                     }
-            //                     db.update(imageData).then(() => {
-            //                         setUpdate(!update)
-            //                         setVisible(!visible)
-            //                         setVariant("success")
-            //                         setSnackMessage("That's it right there, image posted")
-            //                     })
-            //                 })
-            // })
+             console.log(result.type)
+             setImage(result.uri);
+             storage.put(image).then(() => {
+                            storage.getDownloadURL().then(url => {
+                                const db = firebase.database().ref('qr-e-wallet')
+                                const imageData = {
+                                    eWalletLink: url
+                                }
+                                db.update(imageData).then(() => {
+                                    setUpdate(!update)
+                                    setVisible(!visible)
+                                    setVariant("success")
+                                    setSnackMessage("That's it right there, image posted")
+                                })
+                            })
+            })
 
           
   };
@@ -81,13 +92,15 @@ export default function Donation({ route }) {
                         {qrArray ? qrArray.map((data)=> {
                                     return (
                                         // <Text>{data.eWalletLink}</Text>
-                                        <ImageBackground source={data.eWalletLink} style={{width:'90%'}}resizeMode="cover"/>
+                                        <Image source={{uri: data.eWalletLink }} style={{width:'90%'}}resizeMode="cover"/>
                                     )
                             }) : <Text>No Donators yet</Text>}
 
                     </View>
                 </View>
-                     
+                <View>
+                    {image && <Image source={{uri: image }} style={{ width: 200, height: 200 }} />}
+                     </View>
                           
             </ScrollView>
                             <Snackbar

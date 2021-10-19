@@ -5,6 +5,8 @@ import Login from './screens/Login';
 import Register from './screens/Register';
 import AdminUI from './screens/AdminUI';
 import ForgotPass from './screens/ForgotPass';
+import AdminAccount from './components/AdminAccount';
+
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
@@ -17,7 +19,11 @@ return (
         <Stack.Screen name="Login" component={Login} options={{headerShown: false}}/>
         <Stack.Screen name="Register" component={Register} options={{headerShown: false}} />
         <Stack.Screen name="ForgotPass" component={ForgotPass} />
-        <Stack.Screen name="AdminUI" component={AdminUI} options={{headerShown: false}}/>
+        <Stack.Screen name="AdminUI" component={AdminUI} options={{headerShown: false}} />
+        <Stack.Screen name="AdminAccount" component={AdminAccount} options={{headerShown: true, title: 'Admin Account',  headerTitleStyle: {
+          fontSize: 16
+          }}} />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,6 +1,6 @@
 // import React, {useState} from 'react'
 // import {ImageBackground, View, StyleSheet, Text, SafeAreaView, Image} from 'react-native'
-// import {HelperText, TextInput,Button,Title  } from 'react-native-paper';
+import {IconButton, Avatar } from 'react-native-paper';
 // import firebase from '../Firebase/firebase';
 // import banner from '../Images/ui-oms.png';
 // import {auth} from '../Firebase/firebase';
@@ -24,25 +24,74 @@ import Donation from '../components/Donation'
 
 
 const Drawer = createDrawerNavigator();
-
 export default function AdminUI({ route, navigation }) {
-  const {key} = route.params
+  const { key } = route.params
+  const toUser = () => {
+  navigation.navigate('AdminAccount', {
+                                        key: key,
+                                    });
+  }
   return (
     <NavigationContainer independent={true} initialRouteName="Dashboard">
       <Drawer.Navigator screenOptions={{
             headerTitleStyle:{fontSize: 16}
           }} >
-          <Drawer.Screen name="Dashboard" component={Dashboard} initialParams={{key:key}} />
-            <Drawer.Screen name="Themes" component={Themes} initialParams={{key:key}}/>
-            <Drawer.Screen name="Pages" component={Pages} initialParams={{key:key}}/>
-            <Drawer.Screen name="Services" component={Services} initialParams={{key:key}}/>
-            <Drawer.Screen name="Calendar" component={Calendar} initialParams={{key:key}}/>
-            <Drawer.Screen name="Seat Management" component={Seat} initialParams={{key:key}}/>
-            <Drawer.Screen name="Announcement" component={Announcement} initialParams={{key:key}}/>
-            <Drawer.Screen name="Livestream" component={Livestream} initialParams={{key:key}}/>
-            <Drawer.Screen name="Podcasts" component={Podcast} initialParams={{key:key}}/>
-            <Drawer.Screen name="Report Bugs" component={Report} initialParams={{key:key}}/>
-            <Drawer.Screen name="Donation" component={Donation} initialParams={{key:key}}/>
+        <Drawer.Screen name="Dashboard" component={Dashboard} initialParams={{ key: key }}
+          options={{
+              headerRight: () => (
+                <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
+              ),
+            }}/>
+            <Drawer.Screen name="Themes" component={Themes} initialParams={{key:key}} options={{
+              headerRight: () => (
+                <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
+              ),
+            }}/> 
+            <Drawer.Screen name="Pages" component={Pages} initialParams={{key:key}} options={{
+              headerRight: () => (
+                <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
+              ),
+            }}/>
+            <Drawer.Screen name="Services" component={Services} initialParams={{key:key}} options={{
+              headerRight: () => (
+                <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
+              ),
+            }}/>
+            <Drawer.Screen name="Calendar" component={Calendar} initialParams={{key:key}} options={{
+              headerRight: () => (
+                <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
+              ),
+            }}/>
+            <Drawer.Screen name="Seat Management" component={Seat} initialParams={{key:key}} options={{
+              headerRight: () => (
+                <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
+              ),
+            }}/>
+            <Drawer.Screen name="Announcement" component={Announcement} initialParams={{key:key}} options={{
+              headerRight: () => (
+                <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
+              ),
+            }}/>
+            <Drawer.Screen name="Livestream" component={Livestream} initialParams={{key:key}}options={{
+              headerRight: () => (
+                <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
+              ),
+            }}/> 
+            <Drawer.Screen name="Podcasts" component={Podcast} initialParams={{key:key}} options={{
+              headerRight: () => (
+                <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
+              ),
+            }}/>
+            <Drawer.Screen name="Report Bugs" component={Report} initialParams={{key:key}} options={{
+              headerRight: () => (
+                <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
+              ),
+            }}/>
+            <Drawer.Screen name="Donation" component={Donation} initialParams={{key:key}} options={{
+              headerRight: () => (
+                <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
+              ),
+            }}/>
       </Drawer.Navigator>
     </NavigationContainer>
   );

@@ -3,6 +3,8 @@ import {View, StyleSheet, Text, SafeAreaView, ScrollView} from 'react-native'
 import {Button,Title, Provider, Snackbar,TextInput,HelperText, Card, IconButton, Portal, Modal} from 'react-native-paper';
 import firebase from 'firebase';
 import * as ImagePicker from 'expo-image-picker';
+import DocumentPicker from 'react-native-document-picker';
+
 export default function Podcast({ route }) {
     const containerStyle = {backgroundColor: 'white', padding: 20, width: '90%',  alignSelf:'center', borderRadius: 10};
     const {key} = route.params
@@ -33,7 +35,7 @@ export default function Podcast({ route }) {
     const [activeKey, setActiveKey] = useState("");
     const [activePost, setActivePost] = useState("");
     const [activeDescription, setActiveDescription] = useState("");
-
+    const [audio, setAudio] = useState("")
     const onDismissSnackBar = () => setVisible(false);
     const hideModal = () => setOpenEditModal(false);
     function submit() {
@@ -186,20 +188,30 @@ export default function Podcast({ route }) {
             });
     }, [update])
 
-      const pickImage = async () => {
-            let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.All,
-            allowsEditing: true,
-            quality: 1,
-            });
-            if (!result.cancelled) {
-                setImage(result.uri);
-                console.log(result.uri);
+    const selectAudio = async () => {
+        //Opening Document Picker for selection of one file
+            try {
+                const res = await DocumentPicker.pickSingle({
+                    type: [DocumentPicker.types.allFiles],
+                })
+                console.log(
+                    res.uri,
+                    res.type, // mime type
+                    res.name,
+                    res.size,
+                )
+            } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+                // User cancelled the picker, exit any dialogs or menus and move on
+            } else {
+                alert(err)
+                throw err
+            }
             }
 
-          
-  };
-
+            // Pick multiple files
+         
+        }
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
@@ -224,8 +236,8 @@ export default function Podcast({ route }) {
                                 </HelperText>
 
                             </View>
-                            <View>
-                            <IconButton icon="camera" onPress={pickImage}/>
+                            <View style={{marginBottom: 20}}>
+                                <IconButton icon="music" onPress={selectAudio}/>
                             </View>
                         </View>
                     
