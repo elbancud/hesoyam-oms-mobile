@@ -12,21 +12,12 @@ export default function Donation({ route }) {
     const [visible, setVisible] = useState(false);
     const [snackMessage, setSnackMessage] = useState('')
     const [variant, setVariant] = useState('')
-    const [qrArray, setQrArray] = useState('')
+    const [qrArray, setQrArray] = useState()
       const [image, setImage] = useState(null);
 
     const onDismissSnackBar = () => setVisible(false);
 
     useEffect(() => {
-        (async () => {
-            if (Platform.OS !== 'web') {
-                const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-                if (status !== 'granted') {
-                alert('Sorry, we need camera roll permissions to make this work!');
-                }
-            }
-            })();
-    
         const dbRef = firebase.database().ref("user-donations");
         dbRef.once("value")
             .then(function (snapshot) {
@@ -37,15 +28,15 @@ export default function Donation({ route }) {
                 }
                 setDonationsArray(donationsArray)
             });
-        const dbQR= firebase.database().ref('qr-e-wallet')
-        dbQR.once("value")
-            .then(function (snapshot) {
-                const snap = snapshot.val();
-                const qrArray = [];
-                for (let id in snap) {
-                    qrArray.push({id, ...snap[id]});
-                }
-                setQrArray(qrArray)
+            const dbQR = firebase.database().ref('qr-e-wallet')
+            dbQR.once("value")
+                .then(function (snapshot) {
+                    const snap = snapshot.val();
+                    const qrArray = [];
+                    for (let id in snap) {
+                        qrArray.push({id, ...snap[id]});
+                    }
+                    setQrArray(qrArray)
             });
     }, [update])
 
@@ -54,10 +45,9 @@ export default function Donation({ route }) {
                 mediaTypes: ImagePicker.MediaTypeOptions.All,
                 quality: 1,
             });
-            const storage = firebase.storage().ref('qr-links').child('qr-e-wallet')
-             console.log(result.type)
+                const storage = firebase.storage().ref('qr-links').child('qr-e-wallet')
              setImage(result.uri);
-             storage.put(image).then(() => {
+             storage.put(image, {contentType:'image/jpg'}).then(() => {
                             storage.getDownloadURL().then(url => {
                                 const db = firebase.database().ref('qr-e-wallet')
                                 const imageData = {
@@ -88,18 +78,39 @@ export default function Donation({ route }) {
                                        
                 <View style={styles.mY}>
                     <View style={styles.padX}>
+                   <DataTable>
+                    <DataTable.Header>
+                        <DataTable.Title>Name</DataTable.Title>
+                        <DataTable.Title >Amount</DataTable.Title>
+                    </DataTable.Header>
+                            {donationsArray ? donationsArray.map(data => {
+                                return (
+                                    <DataTable.Row key={data.id}>
+                                        <DataTable.Cell>{data.donator}</DataTable.Cell>
+                                        <DataTable.Cell >{data.donationAmount}</DataTable.Cell>
+                                    </DataTable.Row>
+                                )
+                            }): <Text>No donators yet</Text>
+                                
+                            }
+                
                    
-                        {qrArray ? qrArray.map((data)=> {
-                                    return (
-                                        // <Text>{data.eWalletLink}</Text>
-                                        <Image source={{uri: data.eWalletLink }} style={{width:'90%'}}resizeMode="cover"/>
-                                    )
-                            }) : <Text>No Donators yet</Text>}
+                    </DataTable>
 
                     </View>
                 </View>
+                <View style={styles.mY}>
+                        {qrArray ? qrArray.map(data => {
+                                return (
+                                    <Text>{data.eWalletLink}</Text>
+                                )
+                            }): <Text>No donators yet</Text>
+                                
+                    }
+                    <Image source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/hesoyam-oms-867e4.appspot.com/o/qr-links%2Fqr-e-wallet?alt=media&token=86ec6788-12b3-444b-91ed-a38f095572a1' }}  style = {{ width: 200, height: 200 }}/>
+                </View>
                 <View>
-                    {image && <Image source={{uri: image }} style={{ width: 200, height: 200 }} />}
+                    
                      </View>
                           
             </ScrollView>

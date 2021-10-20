@@ -50,8 +50,19 @@ export default function Announcement({ route, navigation }) {
         setOpenEmailModal(false)
         setOpenPasswordModal(false)
         setOpenUsernameModal(false)
-
-    };
+                            setUsernameInput("");
+                            setPasswordInput("");
+                            setPasswordErrorState(false);
+                            setEmailInput("")
+                            setEmailError("")
+                            setEmailErrorState(false)
+                            setPasswordConfirmError("")
+                            setPasswordConfirmErrorState(false)
+                            setPasswordConfirmInput("")
+                            setPasswordCurrentError("")
+                            setPasswordCurrentInput("")
+                            setPasswordCurrentErrorState(false)
+                        };
     const openUsername = () => setOpenUsernameModal(true);
     const openEmail = () => setOpenEmailModal(true);
     const openPassword = () => setOpenPasswordModal(true);
@@ -67,6 +78,7 @@ export default function Announcement({ route, navigation }) {
                 setEmail(snapshot.val().email)
             });
     }, [update])
+
         function signOut() {
             firebase.auth().signOut().then(() => {
                 navigation.navigate('Login')
@@ -109,7 +121,9 @@ export default function Announcement({ route, navigation }) {
                             setVisible(!visible)
                             setSnackMessage("Hey there chief! username updated.")
                             setVariant("success")
-                           
+                             navigation.navigate('AdminAccount', {
+                                        key: key,
+                                    });
                     }   
                 });    
             }).catch(error => {
@@ -159,30 +173,93 @@ export default function Announcement({ route, navigation }) {
                             setUsernameInput("");
                             setPasswordInput("");
                             setPasswordErrorState(false);
-                            setAlertStatus(true)
-
-                            setFeedbackVariant("success")
-                            setAlertMessage("Great job chief! Email updated.")
-                        }).catch(error => {
-                                
-                                            setSnackBar(true);
-                                            setVisible(!visible)
-                                            setSnackMessage(error)
-                                            setVariant("error")
-                            })
+                            
+                              navigation.navigate('AdminAccount', {
+                                        key: key,
+                              });
+                            
+                            setSnackBar(true);
+                            setVisible(!visible)
+                            setSnackMessage("Email updated")
+                            setVariant("success")
+                            setUpdate(!update);
+                        })
                     }
                 })
-                            setPasswordError("");
-                            setPasswordErrorState(false);
+                        
             }).catch(error => {
                 setPasswordError("Incorrect password");
                 setPasswordErrorState(true);
-                             setSnackBar(true);
-                            setVisible(!visible)
-                            setSnackMessage(error)
-                            setVariant("error")
+                            // setSnackBar(true);
+                            // setVisible(!visible)
+                            // setSnackMessage("Oops")
+                            // setVariant("error")
             })
       }
+    }
+    function handleResetPassword(e) {
+        const strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})");
+          
+          auth.signInWithEmailAndPassword(email, passwordCurrentInput)
+              .then(user => {
+                setPasswordCurrentError("");
+                 setPasswordCurrentErrorState(false);
+                 
+            }).catch(error => {
+                 setPasswordCurrentError("Incorrect password");
+                 setPasswordCurrentErrorState(true);
+            })
+        
+        if (!passwordCurrentInput) {
+            setPasswordCurrentError("Please enter your current password");
+            setPasswordCurrentErrorState(true);
+
+        } else {
+            setPasswordCurrentError("");
+            setPasswordCurrentErrorState(false);
+        }if (!passwordInput) {
+             setPasswordError("Please enter your new password");
+             setPasswordErrorState(true);
+        } if (strongRegex.test(passwordInput) === false) {
+            setPasswordError('Weak password: TRY Minimum of 8 characters, 1 Lowercase, 1 Uppercase, 1 Number, 1 Symbol')
+            setPasswordErrorState(true);
+        } else {
+           setPasswordError('')
+            setPasswordErrorState(false);
+        } if (!passwordConfirmInput) {
+             setPasswordConfirmError("Please re-enter your new password");
+             setPasswordConfirmErrorState(true);
+        }if (passwordConfirmInput !== passwordInput) {
+             setPasswordConfirmError("Passwords do not match");
+             setPasswordConfirmErrorState(true);
+        }else {
+           setPasswordConfirmError('')
+            setPasswordConfirmErrorState(false);
+        }
+        if (!passwordConfirmErrorState && !passwordErrorState && !passwordCurrentErrorState) {
+                firebase.auth().currentUser.updatePassword(passwordConfirmInput).then(() => {
+                setPasswordConfirmError("");
+                setPasswordConfirmErrorState(false);
+                setPasswordError('')
+                setPasswordErrorState(false);
+                setPasswordCurrentErrorState(false)
+                setPasswordCurrentInput('')
+                setPasswordCurrentError('')
+                setPasswordConfirmInput('')
+                setPasswordInput('')
+                setOpenPasswordModal(false);
+               
+                           
+                              navigation.navigate('AdminAccount', {
+                                        key: key,
+                              });
+                    
+                            setSnackBar(true);
+                            setVisible(!visible)
+                            setSnackMessage("Keep it to yourself chief! password updated.")
+                            setVariant("success")
+            })
+        }
     }
     return (
         <SafeAreaView style={styles.container}>
@@ -396,7 +473,7 @@ export default function Announcement({ route, navigation }) {
                             </HelperText>
                             
                                     <View >
-                                        <Button style={{paddingVertical:7, backgroundColor: "#53369f" , paddingHorizontal:2, width: '100%'}} mode="contained" >
+                                        <Button style={{paddingVertical:7, backgroundColor: "#53369f" , paddingHorizontal:2, width: '100%'}} mode="contained" onPress={handleResetPassword}>
                                             save changes
                                         </Button>
                                     </View>

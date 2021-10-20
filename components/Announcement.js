@@ -240,7 +240,7 @@ export default function Announcement({ route }) {
                                             shadowOpacity: 0.29,
                                             shadowRadius: 4.65,
 
-                                            elevation: 6,}} elevation={2}>
+                                            elevation: 2,}} elevation={2}>
                                             <View style={{flex:1, flexDirection:'row', justifyContent:'space-between'}}>
                                                     <View style={{ width:'70%'}}>
                                                         <View >
@@ -322,7 +322,7 @@ export default function Announcement({ route }) {
                                     </View>
                                 </View>
                             </Modal>
-                        </Portal>
+            </Portal>
                         
             </Provider>
             <Provider>

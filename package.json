@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@react-native-community/datetimepicker": "3.5.2",
     "@react-native-firebase/app": "^12.9.1",
     "@react-navigation/drawer": "^6.1.8",
     "@react-navigation/native": "^6.0.6",
@@ -23,7 +24,9 @@
     "react-native-document-picker": "^7.1.0",
     "react-native-elements": "^3.4.2",
     "react-native-file-picker": "^0.0.21",
+    "react-native-modal-datetime-picker": "^12.0.0",
     "react-native-paper": "^4.9.2",
+    "react-native-paper-dates": "^0.4.6",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "~3.4.0",
     "react-native-vector-icons": "^8.1.0",
