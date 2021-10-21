@@ -6,14 +6,13 @@ import * as ImagePicker from 'expo-image-picker';
 
 export default function Donation({ route }) {
     const {key} = route.params
-    
     const [update, setUpdate] = useState(false);
     const [donationsArray, setDonationsArray] = useState();
     const [visible, setVisible] = useState(false);
     const [snackMessage, setSnackMessage] = useState('')
     const [variant, setVariant] = useState('')
     const [qrArray, setQrArray] = useState()
-      const [image, setImage] = useState(null);
+    const [image, setImage] = useState(null);
 
     const onDismissSnackBar = () => setVisible(false);
 
@@ -45,9 +44,9 @@ export default function Donation({ route }) {
                 mediaTypes: ImagePicker.MediaTypeOptions.All,
                 quality: 1,
             });
-                const storage = firebase.storage().ref('qr-links').child('qr-e-wallet')
-             setImage(result.uri);
-             storage.put(image, {contentType:'image/jpg'}).then(() => {
+            const storage = firebase.storage().ref('qr-links').child('qr-e-wallet')
+            setImage(result.uri);
+            storage.put(image, {contentType:'image/jpg'}).then(() => {
                             storage.getDownloadURL().then(url => {
                                 const db = firebase.database().ref('qr-e-wallet')
                                 const imageData = {
@@ -61,23 +60,23 @@ export default function Donation({ route }) {
                                 })
                             })
             })
-
-          
   };
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>
-                
+
                         <View style={ styles.padXy}>
                             <Title style={{fontWeight:"bold", marginBottom: 10}}>Donations Tab: Upload QR & View Donators</Title>
                             <Text style={{fontSize: 16, lineHeight: 25}}>Here you will be uploading your e-wallet's qr image, please take a good screenshot and make sure to cut out and keep just the qr code</Text>
                         </View>
                         <View style={ styles.padXy}>
-                    <Button onPress={pickImage} icon="camera" style={{padding:5}} mode="outlined">Upload QR Image</Button>
+                            <Button onPress={pickImage} icon="camera" style={{padding:5}} mode="outlined">Upload QR Image</Button>
                         </View>
                                        
                 <View style={styles.mY}>
+
                     <View style={styles.padX}>
+
                    <DataTable>
                     <DataTable.Header>
                         <DataTable.Title>Name</DataTable.Title>
@@ -93,12 +92,10 @@ export default function Donation({ route }) {
                             }): <Text>No donators yet</Text>
                                 
                             }
-                
-                   
                     </DataTable>
-
                     </View>
                 </View>
+
                 <View style={styles.mY}>
                         {qrArray ? qrArray.map(data => {
                                 return (
@@ -106,13 +103,10 @@ export default function Donation({ route }) {
                                 )
                             }): <Text>No donators yet</Text>
                                 
-                    }
+                        }
                     <Image source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/hesoyam-oms-867e4.appspot.com/o/qr-links%2Fqr-e-wallet?alt=media&token=86ec6788-12b3-444b-91ed-a38f095572a1' }}  style = {{ width: 200, height: 200 }}/>
                 </View>
-                <View>
-                    
-                     </View>
-                          
+                
             </ScrollView>
                             <Snackbar
                                     duration = {2500}

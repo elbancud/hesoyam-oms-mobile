@@ -365,7 +365,7 @@ export default function Services({route}) {
                                     setDaysAppointBefore(snap.daysBeforeAppointment?snap.daysBeforeAppointment: "")
                                     setDaysBeforeCancel(snap.daysBeforeCancel?snap.daysBeforeCancel:"")
                                     setSwitchSeat(snap.seatArrangement ? snap.daysBeforeCancel : false)
-                                    setSessions(snap.sessionIntervalNum?parseInt(snap.daysBeforeCancel,10):"0")
+                                    setSessions(snap.sessionIntervalNum?parseInt(snap.daysBeforeCancel,10):0)
                                     setSessionInterval(snap.sessionState?snap.sessionState :"0")
                         }
                         setServiceArray(serviceArray)
@@ -632,7 +632,7 @@ export default function Services({route}) {
                             <View style={ styles.padX, styles.flexRow}>
                                 <View style={styles.padX}>
                                     <View>
-                                        <Button uppercase={false} icon="menu-down"  onPress={showDatePicker} color="black">{!timeOpFrom? "Select Time": timeOpFrom}</Button>
+                                        <Button uppercase={false} icon="clock"  onPress={showDatePicker} color="black">{!timeOpFrom? "Select Time": timeOpFrom}</Button>
                                         <DateTimePickerModal
                                             isVisible={isDatePickerVisible}
                                             mode="time"
@@ -648,7 +648,7 @@ export default function Services({route}) {
                                 <Text style={{marginBottom:22, marginLeft: 20}}>To</Text>
                                 <View style={ styles.padX}>
                                     <View>
-                                        <Button uppercase={false} icon="menu-down"  onPress={showDatePicker1} color="black">{!timeOpTo? "Select Time": timeOpTo}</Button>
+                                        <Button uppercase={false} icon="clock"  onPress={showDatePicker1} color="black">{!timeOpTo? "Select Time": timeOpTo}</Button>
 
                                         <DateTimePickerModal
                                             isVisible={isDateTo}

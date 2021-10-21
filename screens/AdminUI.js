@@ -14,7 +14,7 @@ import Dashboard from '../components/Dashboard'
 import Pages from '../components/Pages'
 import Services from '../components/Services'
 import Themes from '../components/Themes'
-import Calendar from '../components/Calendar'
+import CalendarTab from '../components/CalendarTab'
 import Seat from '../components/Seat'
 import Livestream from '../components/Livestream'
 import Podcast from '../components/Podcast'
@@ -57,7 +57,7 @@ export default function AdminUI({ route, navigation }) {
                 <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
               ),
             }}/>
-            <Drawer.Screen name="Calendar" component={Calendar} initialParams={{key:key}} options={{
+            <Drawer.Screen name="Calendar" component={CalendarTab} initialParams={{key:key}} options={{
               headerRight: () => (
                 <IconButton onPress={toUser} icon = "robot" color="#fff" style={{ marginRight: 20, backgroundColor:"#960071"}} />
               ),
