@@ -5,7 +5,7 @@ import firebase from 'firebase';
 import * as ImagePicker from 'expo-image-picker';
 
 export default function Donation({ route }) {
-    const {key} = route.params
+    const { key } = route.params
     const [update, setUpdate] = useState(false);
     const [donationsArray, setDonationsArray] = useState();
     const [visible, setVisible] = useState(false);
@@ -23,30 +23,39 @@ export default function Donation({ route }) {
                 const postSnap = snapshot.val();
                 const donationsArray = [];
                 for (let id in postSnap) {
-                    donationsArray.push({id, ...postSnap[id]});
+                    donationsArray.push({ id, ...postSnap[id] });
                 }
                 setDonationsArray(donationsArray)
             });
-            const dbQR = firebase.database().ref('qr-e-wallet')
-            dbQR.once("value")
-                .then(function (snapshot) {
-                    const snap = snapshot.val();
-                    const qrArray = [];
-                    for (let id in snap) {
-                        qrArray.push({id, ...snap[id]});
-                    }
-                    setQrArray(qrArray)
+        const dbQR = firebase.database().ref('qr-e-wallet')
+        dbQR.once("value")
+            .then(function (snapshot) {
+                setQrArray(snapshot.val().eWalletLink)
             });
     }, [update])
-
-         const pickImage = async () => {
-            let result = await ImagePicker.launchImageLibraryAsync({
+    const openGallery = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
                 mediaTypes: ImagePicker.MediaTypeOptions.All,
                 quality: 1,
             });
-            const storage = firebase.storage().ref('qr-links').child('qr-e-wallet')
             setImage(result.uri);
-            storage.put(image, {contentType:'image/jpg'}).then(() => {
+    }
+         const pickImage = async () => {
+           
+            const blob = await new Promise((resolve, reject) => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = function() {
+                resolve(xhr.response);
+            };
+            xhr.onerror = function() {
+                reject(new TypeError("Network request failed"));
+            };
+                xhr.responseType = "blob";
+                xhr.open("GET", image, true);
+                xhr.send(null);
+            });
+            const storage = firebase.storage().ref('qr-links').child('qr')
+            storage.put(blob, {contentType:'image/jpg'}).then(() => {
                             storage.getDownloadURL().then(url => {
                                 const db = firebase.database().ref('qr-e-wallet')
                                 const imageData = {
@@ -69,8 +78,14 @@ export default function Donation({ route }) {
                             <Title style={{fontWeight:"bold", marginBottom: 10}}>Donations Tab: Upload QR & View Donators</Title>
                             <Text style={{fontSize: 16, lineHeight: 25}}>Here you will be uploading your e-wallet's qr image, please take a good screenshot and make sure to cut out and keep just the qr code</Text>
                         </View>
+                        <View style={ styles.padX}>
+                            <Button onPress={openGallery} icon="camera" style={{padding:5}} mode="contained">open gallery</Button>
+                        </View>
+                        <View style={{flex:1, justifyContent:'center', alignContent:'center', width:'90%', paddingVertical:15}}>
+                            {image? <Image source={{uri:image}} style = {{ width: 200, height: 200, alignSelf:'center' }}/> :  <Image source={{uri:qrArray}} style = {{ width: 200, height: 200, alignSelf:'center' }}/> }
+                        </View>
                         <View style={ styles.padXy}>
-                            <Button onPress={pickImage} icon="camera" style={{padding:5}} mode="outlined">Upload QR Image</Button>
+                                <Button disabled={!image} onPress={pickImage} icon="camera" style={{padding:5}} mode="outlined">Upload QR Image</Button>
                         </View>
                                        
                 <View style={styles.mY}>
@@ -96,16 +111,7 @@ export default function Donation({ route }) {
                     </View>
                 </View>
 
-                <View style={styles.mY}>
-                        {qrArray ? qrArray.map(data => {
-                                return (
-                                    <Text>{data.eWalletLink}</Text>
-                                )
-                            }): <Text>No donators yet</Text>
-                                
-                        }
-                    <Image source={{ uri: 'https://firebasestorage.googleapis.com/v0/b/hesoyam-oms-867e4.appspot.com/o/qr-links%2Fqr-e-wallet?alt=media&token=86ec6788-12b3-444b-91ed-a38f095572a1' }}  style = {{ width: 200, height: 200 }}/>
-                </View>
+           
                 
             </ScrollView>
                             <Snackbar

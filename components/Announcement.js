@@ -185,6 +185,7 @@ export default function Announcement({ route }) {
                 setAnnouncementArray(announcementArray)
             });
     }, [update])
+    
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView>

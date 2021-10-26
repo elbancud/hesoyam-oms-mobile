@@ -11,7 +11,7 @@ const CalendarTab = () => {
 
     const [update, setUpdate] = useState("")
     const [events, setEvents] = useState("")
-    const [postedEvents, setPostedEvents] = useState()  
+    const [postedEvents, setPostedEvents] = useState([])  
   
     const [titleErrorState, setTitleErrorState] = useState(false);
     const [titleError, seTitleError] = useState("");
@@ -28,7 +28,7 @@ const CalendarTab = () => {
     const [visible, setVisible] = useState("")
     const onDismissSnackBar = () => setVisible(false);
 
-    const [calendarEventsRender, setCalendarEventsRender ] = useState({})
+    const [calendarEventsRender, setCalendarEventsRender ] = useState()
     useEffect(() => {
       const eventsFromDb = [];
      const db = firebase.database().ref("events")
@@ -36,7 +36,8 @@ const CalendarTab = () => {
              const postSnap = snapshot.val();
                 const events = [];
                 const postedEvents = [];
-            for (let id in postSnap) {
+                
+        for (let id in postSnap) {
                     if (!postSnap.time) {
                       events.push(postSnap[id]);
                     }
@@ -51,13 +52,14 @@ const CalendarTab = () => {
         })
         const newDaysObject = {}
         postedEvents.forEach(data => {
-          newDaysObject[data] = {
-            selected: true, marked: true, selectedColor: 'blue', disableTouchEvent: true
-          }
-
-        });
-      setCalendarEventsRender(newDaysObject)
-      console.log(calendarEventsRender)
+                newDaysObject[data] = {
+                    selected: true, marked: true, selectedColor: 'blue', disableTouchEvent: true
+                }
+            })
+        setCalendarEventsRender(newDaysObject)
+        setTimeout(() => {
+            setUpdate(!update)
+        }, 200);
     }, [update])
      const showDatePicker = () => {
        setDatePickerVisibility(true);
@@ -82,7 +84,6 @@ const CalendarTab = () => {
       hideDatePicker();
     };
     function handleAppoint() {
-       
          if (eventDate === "" || eventTime === "" || titleInput === "" || titleInput.length <8 ) {
                         setTitleErrorState(true)
                         seTitleError("Please enter atleast 8 characters or 3 words above.")
@@ -169,20 +170,13 @@ const CalendarTab = () => {
           
           <Calendar
             current={new Date()}
-            monthFormat={'yyyy MM'}
             firstDay={1}
             onPressArrowLeft={subtractMonth => subtractMonth()}
             onPressArrowRight={addMonth => addMonth()}
             enableSwipeMonths={true}
-          //   markedDates={{
-          //       '2021-10-16': {},
-          //       '2021-10-17': {marked: true, selectedColor: 'blue', disableTouchEvent: true},
-          //       '2021-10-18': {selected: true, marked: true, selectedColor: 'blue', disableTouchEvent: true},
-          //       '2021-10-19': {disabled: true, disableTouchEvent: true}
-          // }}
-          markedDates={{ ...calendarEventsRender }}
-          disabledDaysIndexes={[0, 6]}
-          />
+
+            markedDates={calendarEventsRender}
+            />
               <View style={{flex:1, justifyContent:'center',marginBottom:20}}>
                     <Snackbar
                             duration = {2500}
